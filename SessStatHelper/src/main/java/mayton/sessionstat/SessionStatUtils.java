@@ -21,7 +21,7 @@ public class SessionStatUtils {
 
     static String statisticNumScope = null;
 
-    static String statisticStatement = null;
+    private static String statisticStatement = null;
 
     static {
         StringBuilder sb = new StringBuilder();
@@ -36,7 +36,6 @@ public class SessionStatUtils {
                 "FROM V$SESSTAT " +
                 "WHERE SID = SYS_CONTEXT('USERENV','SID') AND " +
                 "STATISTIC# IN ("+statisticNumScope+")";
-        logger.info(statisticStatement);
     }
 
     @Nonnull
@@ -57,11 +56,11 @@ public class SessionStatUtils {
                     continue;
                 }
                 if (statisticNum == CONSISTENT_GETS.getStatNum()){
-                    stat.setDbBlockGets(value);
+                    stat.setConsistentGets(value);
                     continue;
                 }
                 if (statisticNum == PHYSICAL_READS.getStatNum()){
-                    stat.setSortsMemory(value);
+                    stat.setPhysicalReads(value);
                     continue;
                 }
                 if (statisticNum == REDO_SIZE.getStatNum()){
@@ -110,10 +109,10 @@ public class SessionStatUtils {
                 s2.getRedoSize()       - s1.getRedoSize(),
                 s2.getBytesSentViaSQLNetToClient()       - s1.getBytesSentViaSQLNetToClient(),
                 s2.getBytesReceivedViaSQLNetFromClient() - s1.getBytesReceivedViaSQLNetFromClient(),
-                s2.getRowsProcessed()  - s1.getRowsProcessed(),
                 s2.getSQLNetRoundtripsToFromClient()     - s1.getSQLNetRoundtripsToFromClient(),
                 s2.getSortsMemory()    - s1.getSortsMemory(),
-                s2.getSortsDisk()      - s1.getSortsDisk()
+                s2.getSortsDisk()      - s1.getSortsDisk(),
+                s2.getRowsProcessed()  - s1.getRowsProcessed()
         );
     }
 

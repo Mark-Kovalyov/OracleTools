@@ -13,6 +13,20 @@ sorts (memory)  589
 sorts (disk)    590
 rows processed  (rows fetched via callback)  381
 
+SessionStat{
+ recursiveCalls=9418,
+ dbBlockGets   =1105,
+ consistentGets=81770,
+ physicalReads =81353,
+ redoSize      =209816,
+ bytesSentViaSQLNetToClient=698,
+ bytesReceivedViaSQLNetFromClient=319,
+ SQLNetRoundtripsToFromClient=3,
+ sortsMemory=370,
+ sortsDisk=0,
+ rowsProcessed=738
+}
+
 
 v$sesstat
 =========
