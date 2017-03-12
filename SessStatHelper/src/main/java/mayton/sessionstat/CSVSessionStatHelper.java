@@ -5,14 +5,18 @@ import org.apache.commons.csv.CSVPrinter;
 
 import javax.annotation.Nonnull;
 import java.io.IOException;
+import java.io.OutputStream;
+import java.io.PrintWriter;
 import java.io.Writer;
 import java.util.List;
 
 import static jdk.nashorn.internal.objects.Global.print;
 
-public class CSVSessionStatHelper {
+public class CSVSessionStatHelper implements SessionWriteHelper {
 
-    public static void write(@Nonnull List<SessionStat> sessionStats,@Nonnull Writer writer) throws IOException {
+    @Override
+    public void write(@Nonnull List<SessionStatWithLabel> sessionStatsWithLabel, @Nonnull OutputStream os) throws IOException {
+        PrintWriter writer = new PrintWriter(os);
         CSVPrinter csvPrinter = CSVFormat.DEFAULT.withHeader(
                 "recursiveCalls",
                 "dbBlockGets",
@@ -26,7 +30,8 @@ public class CSVSessionStatHelper {
                 "sortsDisk",
                 "rowsProcessed"
         ).print(writer);
-        for(SessionStat s : sessionStats){
+        for(SessionStatWithLabel ss : sessionStatsWithLabel){
+            SessionStat s = ss.getSessionStat();
             csvPrinter.print(s.getRecursiveCalls());
             csvPrinter.print(s.getDbBlockGets());
             csvPrinter.print(s.getConsistentGets());
@@ -41,7 +46,7 @@ public class CSVSessionStatHelper {
             csvPrinter.println();
         }
         csvPrinter.close();
-
+        writer.flush();
     }
 
 }
