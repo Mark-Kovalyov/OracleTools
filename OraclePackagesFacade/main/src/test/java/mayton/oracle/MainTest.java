@@ -1,5 +1,7 @@
+package mayton.oracle;
+
 import org.antlr.v4.runtime.*;
-import org.antlr.v4.runtime.atn.ATN;
+import org.antlr.v4.runtime.atn.*;
 
 import org.junit.Test;
 import org.slf4j.Logger;

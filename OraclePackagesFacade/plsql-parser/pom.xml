@@ -72,7 +72,7 @@
                     <arguments></arguments>
                     <options></options>
                     <!-- Specify output directory where the Java files are generated. -->
-                    <outputDirectory>${basedir}/src/main/java</outputDirectory>
+                    <outputDirectory>${basedir}/src/main/java/mayton/oracle</outputDirectory>
                     <libDirectory></libDirectory>
                     <listener>true</listener>
                     <visitor>true</visitor>

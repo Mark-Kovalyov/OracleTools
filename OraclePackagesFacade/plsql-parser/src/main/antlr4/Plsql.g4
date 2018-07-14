@@ -1,6 +1,19 @@
 grammar Plsql;
 
+options {
+  // antlr will generate java lexer and parser
+  language = Java;
+}
+
 // --------------------- Parser rules: --------------------------------------
+
+@lexer::header {
+package mayton.oracle;
+}
+
+@parser::header {
+package mayton.oracle;
+}
 
 prog: package_definition;
 
