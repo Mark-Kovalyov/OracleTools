@@ -45,7 +45,7 @@
                 <configuration>
                     <filesets>
                         <fileset>
-                            <directory>${basedir}/src/main/java</directory>
+                            <directory>${basedir}/src/main/java/mayton/oracle</directory>
                             <includes>
                                 <include>**/*</include>
                             </includes>
@@ -54,6 +54,16 @@
                     </filesets>
                 </configuration>
             </plugin>
+
+            <!--
+                antlr4:antlr4
+                  Parses ANTLR 4 grammar files *.g4 and transforms them into Java source files.
+
+                antlr4:help
+                  Display help information on antlr4-maven-plugin.
+                  Call mvn antlr4:help -Ddetail=true -Dgoal=<goal-name> to display parameter
+                  details.
+            -->
             <plugin>
                 <groupId>org.antlr</groupId>
                 <artifactId>antlr4-maven-plugin</artifactId>

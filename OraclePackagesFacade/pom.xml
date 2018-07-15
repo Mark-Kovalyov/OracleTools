@@ -14,6 +14,7 @@
 
   <modules>
     <module>plsql-parser</module>
+    <module>plsql-parser-javacc</module>
     <module>main</module>
   </modules>
 

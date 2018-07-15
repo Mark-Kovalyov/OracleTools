@@ -1,0 +1,129 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project xmlns="http://maven.apache.org/POM/4.0.0"
+         xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+         xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
+    <modelVersion>4.0.0</modelVersion>
+
+    <parent>
+        <groupId>mayton.oracle</groupId>
+        <artifactId>OraclePackagesFacade</artifactId>
+        <version>1.0-SNAPSHOT</version>
+    </parent>
+
+    <properties>
+        <antlr.version>4.7.1</antlr.version>
+        <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
+        <maven.compiler.source>1.8</maven.compiler.source>
+        <maven.compiler.target>1.8</maven.compiler.target>
+    </properties>
+
+    <groupId>mayton.oracle</groupId>
+    <artifactId>plsql-parser-javacc</artifactId>
+    <version>1.0-SNAPSHOT</version>
+
+    <dependencies>
+        <dependency>
+            <groupId>junit</groupId>
+            <artifactId>junit</artifactId>
+            <version>4.12</version>
+            <scope>test</scope>
+        </dependency>
+
+        <!--dependency>
+            <groupId>net.java.dev.javacc</groupId>
+            <artifactId>javacc</artifactId>
+            <version>7.0.3</version>
+        </dependency-->
+    </dependencies>
+
+    <build>
+        <plugins>
+
+            <plugin>
+                <artifactId>maven-clean-plugin</artifactId>
+                <version>3.1.0</version>
+                <configuration>
+                    <filesets>
+                        <fileset>
+                            <directory>${basedir}/src/main/java/mayton/oracle</directory>
+                            <includes>
+                                <include>**/*</include>
+                            </includes>
+                            <followSymlinks>false</followSymlinks>
+                        </fileset>
+                    </filesets>
+                </configuration>
+            </plugin>
+
+            <!-- This plugin has 7 goals:
+
+                javacc:help
+                  Description: Display help information on javacc-maven-plugin.
+                    Call
+                     mvn javacc:help -Ddetail=true -Dgoal=<goal-name>
+                    to display parameter details.
+
+                javacc:javacc
+                  Description: Parses a JavaCC grammar file (*.jj) and transforms it to Java
+                    source files. Detailed information about the JavaCC options can be found on
+                    the JavaCC website.
+
+                javacc:jjdoc
+                  Description: JJDoc takes a JavaCC parser specification and produces
+                    documentation for the BNF grammar. This mojo will search the source
+                    directory for all *.jj files and run JJDoc once for each file it finds.
+                    Each of these output files, along with an index.html file will be placed in
+                    the site directory (target/site/jjdoc), and a link will be created in the
+                    'Project Reports' menu of the generated site.
+                  Note: This goal should be used as a Maven report.
+
+                javacc:jjtree
+                  Description: Parses a JJTree grammar file (*.jjt) and transforms it to Java
+                    source files and a JavaCC grammar file. Please see the JJTree Reference
+                    Documentation for more information.
+                  Deprecated. As of version 2.4, use the <code>jjtree-javacc</code> goal
+                  instead.
+
+                javacc:jjtree-javacc
+                  Description: Preprocesses decorated grammar files (*.jjt) with JJTree and
+                    passes the output to JavaCC in order to finally generate a parser with
+                    parse tree actions.
+
+                javacc:jtb
+                  Description: Parses a JTB file and transforms it into source files for an
+                    AST and a JavaCC grammar file which automatically builds the AST.
+
+                    Note: JTB requires Java 1.5 or higher. This goal will not work with earlier
+                    versions of the JRE.
+                  Deprecated. As of version 2.4, use the <code>jtb-javacc</code> goal instead.
+
+                javacc:jtb-javacc
+                  Description: Preprocesses ordinary grammar files (*.jtb) with JTB and
+                    passes the output to JavaCC in order to finally generate a parser with
+                    parse tree actions.
+
+                    Note: JTB requires Java 1.5 or higher. This goal will not work with earlier
+                    versions of the JRE.
+                -->
+            <plugin>
+                <groupId>org.codehaus.mojo</groupId>
+                <artifactId>javacc-maven-plugin</artifactId>
+                <version>2.6</version>
+                <executions>
+                    <execution>
+                        <id>plsql-javacc</id>
+                        <configuration>
+                            <sourceDirectory>${basedir}/src/main/javacc</sourceDirectory>
+                            <outputDirectory>${basedir}/src/main/java</outputDirectory>
+                        </configuration>
+                        <goals>
+                            <goal>jjtree-javacc</goal>
+                        </goals>
+                    </execution>
+                </executions>
+            </plugin>
+        </plugins>
+    </build>
+
+
+</project>

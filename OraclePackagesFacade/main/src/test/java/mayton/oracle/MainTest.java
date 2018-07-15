@@ -8,6 +8,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import java.io.IOException;
+import java.io.InputStream;
 
 import static org.junit.Assert.assertEquals;
 
@@ -15,13 +16,16 @@ public class MainTest {
 
     static Logger logger = LoggerFactory.getLogger(MainTest.class);
 
+
+    InputStream getResource(String name) {
+        ClassLoader classLoader = getClass().getClassLoader();
+        return classLoader.getResourceAsStream(name);
+    }
+
     @Test
     public void test() throws IOException {
 
-        ClassLoader classLoader = getClass().getClassLoader();
-
-        CharStream charStream = CharStreams.fromStream(
-                classLoader.getResourceAsStream("emp_mgmt.sql"));
+        CharStream charStream = CharStreams.fromStream(getResource("emp_mgmt.sql"));
 
         TokenSource tokenSource = new PlsqlLexer(charStream);
 
