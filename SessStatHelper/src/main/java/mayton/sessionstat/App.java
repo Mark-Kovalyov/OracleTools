@@ -68,6 +68,6 @@ public class App
         stats.add(new SessionStatWithLabel(calculateDifference(ss1,ss4),"Sum:"));
 
         new CSVSessionStatHelper().write(stats, System.out);
-        new ExcelSessionStatHelper().write(stats, new FileOutputStream("out5.xlsx"));
+
     }
 }

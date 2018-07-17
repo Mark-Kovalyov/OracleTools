@@ -1,5 +1,6 @@
 package mayton.sessionstat;
 
+import org.apache.commons.lang3.StringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -9,9 +10,9 @@ import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
-import java.util.*;
+import java.util.Arrays;
+import java.util.stream.Collectors;
 
-import static java.util.Collections.unmodifiableMap;
 import static mayton.sessionstat.StatNames.*;
 
 @NotThreadSafe
@@ -19,23 +20,23 @@ public class SessionStatUtils {
 
     static Logger logger = LoggerFactory.getLogger(SessionStatUtils.class);
 
-    static String statisticNumScope = null;
-
     private static String statisticStatement = null;
 
     static {
-        StringBuilder sb = new StringBuilder();
-        for(StatNames v : StatNames.values()){
-            sb.append(v.getStatNum());
-            sb.append(",");
-        }
-        statisticNumScope = sb.toString();
-        statisticNumScope = statisticNumScope.substring(0,statisticNumScope.length() - 1);
+        String statisticNames = Arrays.stream(StatNames.values())
+                .map((v) -> "'" + v + "'")
+                .collect(Collectors.joining(","));
+
         statisticStatement =
-                "SELECT STATISTIC#,VALUE " +
-                "FROM V$SESSTAT " +
-                "WHERE SID = SYS_CONTEXT('USERENV','SID') AND " +
-                "STATISTIC# IN ("+statisticNumScope+")";
+                "SELECT " +
+                        "SN.NAME, " +
+                        "SS.VALUE " +
+                " FROM " +
+                        "V$SESSTAT SS," +
+                        "V$STATNAME SN " +
+                " WHERE SID = SYS_CONTEXT('USERENV','SID') AND " +
+                "        SS.STATISTIC# = SN.STATISTIC# AND" +
+                "        SN.NAME IN (" + statisticNames + ")";
     }
 
     @Nonnull
@@ -45,49 +46,51 @@ public class SessionStatUtils {
             PreparedStatement preparedStatement = conn.prepareStatement(statisticStatement);
             ResultSet rs = preparedStatement.executeQuery();
             while(rs.next()){
-                long statisticNum = rs.getLong(1);
-                long value        = rs.getLong(2);
-                if (statisticNum == RECURSIVE_CALLS.getStatNum()){
+
+                String  statisticName = rs.getString(1);
+                long    value         = rs.getLong(2);
+
+                if (statisticName == RECURSIVE_CALLS.name()){
                     stat.setRecursiveCalls(value);
                     continue;
                 }
-                if (statisticNum == DB_BLOCK_GETS.getStatNum()){
+                if (statisticName == DB_BLOCK_GETS.name()){
                     stat.setDbBlockGets(value);
                     continue;
                 }
-                if (statisticNum == CONSISTENT_GETS.getStatNum()){
+                if (statisticName == CONSISTENT_GETS.name()){
                     stat.setConsistentGets(value);
                     continue;
                 }
-                if (statisticNum == PHYSICAL_READS.getStatNum()){
+                if (statisticName == PHYSICAL_READS.name()){
                     stat.setPhysicalReads(value);
                     continue;
                 }
-                if (statisticNum == REDO_SIZE.getStatNum()){
+                if (statisticName == REDO_SIZE.name()){
                     stat.setRedoSize(value);
                     continue;
                 }
-                if (statisticNum == BYTES_SENT_VIA_SQLNET_TO_CLIENT.getStatNum()){
+                if (statisticName == BYTES_SENT_VIA_SQLNET_TO_CLIENT.name()){
                     stat.setBytesSentViaSQLNetToClient(value);
                     continue;
                 }
-                if (statisticNum == BYTES_RECEIVED_VIA_SQLNET_FROM_CLIENT.getStatNum()){
+                if (statisticName == BYTES_RECEIVED_VIA_SQLNET_FROM_CLIENT.name()){
                     stat.setBytesReceivedViaSQLNetFromClient(value);
                     continue;
                 }
-                if (statisticNum == SQLNET_ROUNDTRIPS_TO_FROM_CLIENT.getStatNum()){
+                if (statisticName == SQLNET_ROUNDTRIPS_TO_FROM_CLIENT.name()){
                     stat.setSQLNetRoundtripsToFromClient(value);
                     continue;
                 }
-                if (statisticNum == SORTS_MEMORY.getStatNum()){
+                if (statisticName == SORTS_MEMORY.name()){
                     stat.setSortsMemory(value);
                     continue;
                 }
-                if (statisticNum == SORTS_DISK.getStatNum()){
+                if (statisticName == SORTS_DISK.name()){
                     stat.setSortsDisk(value);
                     continue;
                 }
-                if (statisticNum == ROWS_FETCHED_VIA_CALLBACK.getStatNum()){
+                if (statisticName == ROWS_FETCHED_VIA_CALLBACK.name()){
                     stat.setRowsProcessed(value);
                     continue;
                 }
