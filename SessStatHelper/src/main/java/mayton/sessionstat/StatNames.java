@@ -22,19 +22,21 @@ public enum StatNames {
      */
     ROWS_FETCHED_VIA_CALLBACK("rows fetched via callback");
 
-    public final String name;
+    public final String desc;
 
-
-    StatNames(String name) {
-        this.name = name;
+    StatNames(String desc) {
+        this.desc = desc;
     }
 
-    public StatNames decode(String name) {
-        for(StatNames statName : StatNames.values()) {
-            if (statName.name.equals(name)){
-                return statName;
-            }
+    public static String formatCsvDesc() {
+        // TODO: Replace with Stream
+        StringBuilder sb = new StringBuilder();
+        for(StatNames statNames : StatNames.values()) {
+            sb.append("'");
+            sb.append(statNames.desc);
+            sb.append("',");
         }
-        return null;
+        String res = sb.toString();
+        return res.substring(0,res.length() - 1);
     }
 }

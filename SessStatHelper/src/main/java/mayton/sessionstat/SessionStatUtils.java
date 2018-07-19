@@ -1,6 +1,4 @@
 package mayton.sessionstat;
-
-import org.apache.commons.lang3.StringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -10,8 +8,6 @@ import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
-import java.util.Arrays;
-import java.util.stream.Collectors;
 
 import static mayton.sessionstat.StatNames.*;
 
@@ -23,24 +19,21 @@ public class SessionStatUtils {
     private static String statisticStatement = null;
 
     static {
-        String statisticNames = Arrays.stream(StatNames.values())
-                .map((v) -> "'" + v + "'")
-                .collect(Collectors.joining(","));
-
         statisticStatement =
                 "SELECT " +
                         "SN.NAME, " +
-                        "SS.VALUE " +
+                        "SS.VALUE, " +
+                        "SN.CLASS" +
                 " FROM " +
-                        "V$SESSTAT SS," +
+                        "V$SESSTAT  SS," +
                         "V$STATNAME SN " +
                 " WHERE SID = SYS_CONTEXT('USERENV','SID') AND " +
                 "        SS.STATISTIC# = SN.STATISTIC# AND" +
-                "        SN.NAME IN (" + statisticNames + ")";
+                "        SN.NAME IN (" + StatNames.formatCsvDesc() + ")";
     }
 
     @Nonnull
-    static SessionStat readSessionStat(@Nonnull Connection conn) throws SQLException{
+    public static SessionStat readSessionStat(@Nonnull Connection conn) throws SQLException{
         if (!conn.isClosed()) {
             SessionStat stat = new SessionStat();
             PreparedStatement preparedStatement = conn.prepareStatement(statisticStatement);
@@ -49,48 +42,49 @@ public class SessionStatUtils {
 
                 String  statisticName = rs.getString(1);
                 long    value         = rs.getLong(2);
+                String  className     = rs.getString(3);
 
-                if (statisticName == RECURSIVE_CALLS.name()){
+                if (statisticName.equals(RECURSIVE_CALLS.desc)){
                     stat.setRecursiveCalls(value);
                     continue;
                 }
-                if (statisticName == DB_BLOCK_GETS.name()){
+                if (statisticName.equals(DB_BLOCK_GETS.desc)){
                     stat.setDbBlockGets(value);
                     continue;
                 }
-                if (statisticName == CONSISTENT_GETS.name()){
+                if (statisticName.equals(CONSISTENT_GETS.desc)){
                     stat.setConsistentGets(value);
                     continue;
                 }
-                if (statisticName == PHYSICAL_READS.name()){
+                if (statisticName.equals(PHYSICAL_READS.desc)){
                     stat.setPhysicalReads(value);
                     continue;
                 }
-                if (statisticName == REDO_SIZE.name()){
+                if (statisticName.equals(REDO_SIZE.desc)){
                     stat.setRedoSize(value);
                     continue;
                 }
-                if (statisticName == BYTES_SENT_VIA_SQLNET_TO_CLIENT.name()){
+                if (statisticName.equals(BYTES_SENT_VIA_SQLNET_TO_CLIENT.desc)){
                     stat.setBytesSentViaSQLNetToClient(value);
                     continue;
                 }
-                if (statisticName == BYTES_RECEIVED_VIA_SQLNET_FROM_CLIENT.name()){
+                if (statisticName.equals(BYTES_RECEIVED_VIA_SQLNET_FROM_CLIENT.desc)){
                     stat.setBytesReceivedViaSQLNetFromClient(value);
                     continue;
                 }
-                if (statisticName == SQLNET_ROUNDTRIPS_TO_FROM_CLIENT.name()){
+                if (statisticName.equals(SQLNET_ROUNDTRIPS_TO_FROM_CLIENT.desc)){
                     stat.setSQLNetRoundtripsToFromClient(value);
                     continue;
                 }
-                if (statisticName == SORTS_MEMORY.name()){
+                if (statisticName.equals(SORTS_MEMORY.desc)){
                     stat.setSortsMemory(value);
                     continue;
                 }
-                if (statisticName == SORTS_DISK.name()){
+                if (statisticName.equals(SORTS_DISK.desc)){
                     stat.setSortsDisk(value);
                     continue;
                 }
-                if (statisticName == ROWS_FETCHED_VIA_CALLBACK.name()){
+                if (statisticName.equals(ROWS_FETCHED_VIA_CALLBACK.desc)){
                     stat.setRowsProcessed(value);
                     continue;
                 }
@@ -103,7 +97,7 @@ public class SessionStatUtils {
     }
 
     @Nonnull
-    static SessionStat calculateDifference(SessionStat s1,SessionStat s2){
+    public static SessionStat calculateDifference(SessionStat s1,SessionStat s2){
         return new SessionStat(
                 s2.getRecursiveCalls() - s1.getRecursiveCalls(),
                 s2.getDbBlockGets()    - s1.getDbBlockGets(),
